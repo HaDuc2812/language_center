@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329420324009",
+    "project_id": "language-center-dev-58528",
+    "storage_bucket": "language-center-dev-58528.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329420324009:android:66565680e2a9a96cf0fdb8",
+        "android_client_info": {
+          "package_name": "com.example.language_center"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLY8PiYkIpNpcqh-dDz3GZ9ns0He1yJHA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
