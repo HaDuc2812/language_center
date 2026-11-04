@@ -32,6 +32,9 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+*.db
+*.db-shm
+*.db-wal
 
 # Symbolication related
 app.*.symbols

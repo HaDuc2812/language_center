@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../features/auth/view/auth_gate.dart';
+
 class LanguageCenterApp extends StatelessWidget {
   const LanguageCenterApp({super.key});
 
@@ -12,15 +14,7 @@ class LanguageCenterApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Language Center')),
-        body: const Center(
-          child: Text(
-            'Ứng dụng đã khởi tạo Firebase.',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
+      home: const AuthGate(),
     );
   }
 }
