@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../auth/view/logout_button.dart';
 import '../../auth/view_model/auth_view_model.dart';
+import '../../teachers/views/teacher_list_view.dart';
 import 'classes_page.dart';
 import 'enrollments_page.dart';
 import 'student_lookup_page.dart';
@@ -25,6 +26,7 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
     EnrollmentsPage(),
     ClassesPage(),
     StudentLookupPage(),
+    TeacherListView(showAppBar: false),
     CourseListPage(), // ← MỚI
     ClassroomListPage(), // ← MỚI
   ];
@@ -58,6 +60,10 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
             selectedIcon: Icon(Icons.person_search),
             label: 'Học viên',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.school_outlined),
+            selectedIcon: Icon(Icons.school),
+            label: 'Giáo viên',
           // Thêm destination:
           NavigationDestination(
             icon: Icon(Icons.book_outlined),
