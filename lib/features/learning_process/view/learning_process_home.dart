@@ -45,37 +45,37 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
           setState(() => _selectedIndex = index);
         },
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Tổng quan',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.class_outlined),
-            selectedIcon: Icon(Icons.class_),
-            label: 'Lớp học',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_search_outlined),
-            selectedIcon: Icon(Icons.person_search),
-            label: 'Học viên',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.school_outlined),
-            selectedIcon: Icon(Icons.school),
-            label: 'Giáo viên',
-          // Thêm destination:
-          NavigationDestination(
-            icon: Icon(Icons.book_outlined),
-            selectedIcon: Icon(Icons.book),
-            label: 'Khóa học',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.meeting_room_outlined),
-            selectedIcon: Icon(Icons.meeting_room),
-            label: 'Phòng',
-          ),
-        ],
+  NavigationDestination(
+    icon: Icon(Icons.dashboard_outlined),
+    selectedIcon: Icon(Icons.dashboard),
+    label: 'Tổng quan',
+  ),
+  NavigationDestination(
+    icon: Icon(Icons.class_outlined),
+    selectedIcon: Icon(Icons.class_),
+    label: 'Lớp học',
+  ),
+  NavigationDestination(
+    icon: Icon(Icons.person_search_outlined),
+    selectedIcon: Icon(Icons.person_search),
+    label: 'Học viên',
+  ),
+  NavigationDestination(
+    icon: Icon(Icons.school_outlined),
+    selectedIcon: Icon(Icons.school),
+    label: 'Giáo viên',
+  ),
+  NavigationDestination(
+    icon: Icon(Icons.book_outlined),
+    selectedIcon: Icon(Icons.book),
+    label: 'Khóa học',
+  ),
+  NavigationDestination(
+    icon: Icon(Icons.meeting_room_outlined),
+    selectedIcon: Icon(Icons.meeting_room),
+    label: 'Phòng',
+  ),
+],
       ),
     );
   }
