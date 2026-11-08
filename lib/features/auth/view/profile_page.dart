@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/providers/preferences_provider.dart';
 import '../view_model/auth_view_model.dart';
+import 'account_settings_page.dart';
+import 'auth_event_notification.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -22,8 +24,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   bool _obscureConfirm = true;
   bool _savingProfile = false;
   bool _changingPassword = false;
-  bool _rememberEmail = false;
-  bool _darkMode = false;
 
   @override
   void initState() {
@@ -32,17 +32,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     _currentPasswordController = TextEditingController();
     _newPasswordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
-    _loadPreferences();
-  }
-
-  Future<void> _loadPreferences() async {
-    final remember = await getRememberEmailPreference(ref);
-    final darkMode = await getDarkModePreference(ref);
-    if (!mounted) return;
-    setState(() {
-      _rememberEmail = remember;
-      _darkMode = darkMode;
-    });
   }
 
   @override
@@ -58,17 +47,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Widget build(BuildContext context) {
     final user = ref.watch(authSessionProvider).asData?.value;
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text('Bạn chưa đăng nhập.')),
-      );
+      return const Scaffold(body: Center(child: Text('Bạn chưa đăng nhập.')));
     }
 
     final profile = ref.watch(authorizedProfileProvider(user.uid));
 
     return profile.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stackTrace) => Scaffold(
         body: Center(
           child: Padding(
@@ -91,7 +77,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         }
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Tài khoản của tôi')),
+          appBar: AppBar(
+            title: const Text('Tài khoản của tôi'),
+            actions: [
+              IconButton(
+                tooltip: 'Cài đặt tài khoản',
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const AccountSettingsPage(),
+                  ),
+                ),
+                icon: const Icon(Icons.settings_outlined),
+              ),
+            ],
+          ),
           body: SafeArea(
             child: ListView(
               padding: const EdgeInsets.all(16),
@@ -159,38 +158,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        SwitchListTile.adaptive(
-                          title: const Text('Ghi nhớ email đăng nhập'),
-                          subtitle: const Text('Lưu email ở thiết bị này'),
-                          value: _rememberEmail,
-                          onChanged: (value) async {
-                            setState(() => _rememberEmail = value);
-                            await setRememberEmailPreference(ref, remember: value);
-                            if (value == false) {
-                              await clearSavedEmail(ref);
-                            }
-                          },
-                        ),
-                        SwitchListTile.adaptive(
-                          title: const Text('Chế độ tối'),
-                          subtitle: const Text('Lưu tùy chọn hiển thị'),
-                          value: _darkMode,
-                          onChanged: (value) async {
-                            setState(() => _darkMode = value);
-                            await setDarkModePreference(ref, enabled: value);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -230,9 +197,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             prefixIcon: const Icon(Icons.lock_reset_outlined),
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
-                              onPressed: () => setState(
-                                () => _obscureNew = !_obscureNew,
-                              ),
+                              onPressed: () =>
+                                  setState(() => _obscureNew = !_obscureNew),
                               icon: Icon(
                                 _obscureNew
                                     ? Icons.visibility_outlined
@@ -265,7 +231,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
-                            onPressed: _changingPassword ? null : _changePassword,
+                            onPressed: _changingPassword
+                                ? null
+                                : _changePassword,
                             icon: const Icon(Icons.key_outlined),
                             label: _changingPassword
                                 ? const Text('Đang đổi...')
@@ -292,14 +260,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           .read(authViewModelProvider.notifier)
           .updateProfile(fullName: _fullNameController.text);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cập nhật hồ sơ thành công.')),
-      );
+      showAuthEventNotification(context, ref, 'Cập nhật hồ sơ thành công.');
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi: ${error.toString()}')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi: ${error.toString()}')));
     } finally {
       if (mounted) setState(() => _savingProfile = false);
     }
@@ -310,7 +276,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final newPassword = _newPasswordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    if (currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+    if (currentPassword.isEmpty ||
+        newPassword.isEmpty ||
+        confirmPassword.isEmpty) {
       _showMessage('Vui lòng điền đầy đủ thông tin mật khẩu.');
       return;
     }
@@ -321,26 +289,46 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     setState(() => _changingPassword = true);
     try {
-      await ref.read(authViewModelProvider.notifier).changePassword(
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-      );
+      await ref
+          .read(authViewModelProvider.notifier)
+          .changePassword(
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+          );
       if (!mounted) return;
       _currentPasswordController.clear();
       _newPasswordController.clear();
       _confirmPasswordController.clear();
-      _showMessage('Đổi mật khẩu thành công.');
+      showAuthEventNotification(context, ref, 'Đổi mật khẩu thành công.');
     } catch (error) {
       if (!mounted) return;
-      _showMessage('Không thể đổi mật khẩu: ${error.toString()}');
+      _showMessage(_changePasswordErrorMessage(error));
     } finally {
       if (mounted) setState(() => _changingPassword = false);
     }
   }
 
+  String _changePasswordErrorMessage(Object error) {
+    if (error is FirebaseAuthException) {
+      return switch (error.code) {
+        'invalid-credential' || 'wrong-password' =>
+          'Mật khẩu hiện tại không đúng. Hãy kiểm tra lại hoặc dùng “Quên mật khẩu” để đặt lại.',
+        'too-many-requests' =>
+          'Bạn đã thử quá nhiều lần. Vui lòng đợi rồi thử lại.',
+        'network-request-failed' =>
+          'Không thể kết nối mạng. Hãy kiểm tra kết nối rồi thử lại.',
+        'weak-password' => 'Mật khẩu mới quá yếu. Hãy chọn mật khẩu khác.',
+        _ => 'Không thể đổi mật khẩu: ${error.message ?? error.code}',
+      };
+    }
+    return 'Không thể đổi mật khẩu: $error';
+  }
+
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
@@ -359,7 +347,10 @@ class _InfoRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 110,
-            child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
           Expanded(child: Text(value.isEmpty ? '—' : value)),
         ],

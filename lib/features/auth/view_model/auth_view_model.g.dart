@@ -20,7 +20,7 @@ final class AuthViewModelProvider
         argument: null,
         retry: null,
         name: r'authViewModelProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -33,7 +33,7 @@ final class AuthViewModelProvider
   AuthViewModel create() => AuthViewModel();
 }
 
-String _$authViewModelHash() => r'bc1173b575baef4a35972a4c28c82b282b4854f7';
+String _$authViewModelHash() => r'278d1b12093228f95e44e4ba14db03e512e49f69';
 
 abstract class _$AuthViewModel extends $AsyncNotifier<void> {
   FutureOr<void> build();
@@ -143,7 +143,7 @@ final class AuthorizedProfileProvider
   }
 }
 
-String _$authorizedProfileHash() => r'110526964836092a8e1839f56b6dbe28e5a9c922';
+String _$authorizedProfileHash() => r'ec94ebc4233cc18aee1777041a2a25985c7f82bb';
 
 final class AuthorizedProfileFamily extends $Family
     with $FunctionalFamilyOverride<Stream<AuthorizedProfile?>, String> {

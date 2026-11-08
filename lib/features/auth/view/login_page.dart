@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/preferences_provider.dart';
 import '../view_model/auth_view_model.dart';
+import 'forgot_password_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -146,7 +147,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               child: Text('Ghi nhớ email đăng nhập'),
                             ),
                             TextButton(
-                              onPressed: isLoading ? null : _resetPassword,
+                              onPressed: isLoading
+                                  ? null
+                                  : () => Navigator.of(context).push(
+                                      MaterialPageRoute<void>(
+                                        builder: (_) => ForgotPasswordPage(
+                                          initialEmail: _emailController.text,
+                                        ),
+                                      ),
+                                    ),
                               child: const Text('Quên mật khẩu?'),
                             ),
                           ],
@@ -195,25 +204,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       } else {
         await clearSavedEmail(ref);
         await setRememberEmailPreference(ref, remember: false);
-      }
-    } catch (error) {
-      if (mounted) _showMessage(_authErrorMessage(error));
-    }
-  }
-
-  Future<void> _resetPassword() async {
-    final email = _emailController.text.trim();
-    if (_validateEmail(email) != null) {
-      _showMessage('Hãy nhập email hợp lệ để khôi phục mật khẩu.');
-      return;
-    }
-
-    try {
-      await ref
-          .read(authViewModelProvider.notifier)
-          .sendPasswordResetEmail(email);
-      if (mounted) {
-        _showMessage('Đã gửi email hướng dẫn khôi phục mật khẩu.');
       }
     } catch (error) {
       if (mounted) _showMessage(_authErrorMessage(error));

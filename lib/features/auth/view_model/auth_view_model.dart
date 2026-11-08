@@ -17,7 +17,7 @@ class AuthAccessException implements Exception {
   String toString() => message;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthViewModel extends _$AuthViewModel {
   @override
   FutureOr<void> build() {}
@@ -62,18 +62,11 @@ class AuthViewModel extends _$AuthViewModel {
     state = const AsyncLoading();
     try {
       await user.updateDisplayName(trimmedName);
-      await ref
-          .read(firestoreProvider)
-          .collection('users')
-          .doc(user.uid)
-          .set(
-            {
-              'fullName': trimmedName,
-              'email': user.email ?? '',
-              'updatedAt': FieldValue.serverTimestamp(),
-            },
-            SetOptions(merge: true),
-          );
+      await ref.read(firestoreProvider).collection('users').doc(user.uid).set({
+        'fullName': trimmedName,
+        'email': user.email ?? '',
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
       state = const AsyncData(null);
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
