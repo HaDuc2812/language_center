@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:language_center/core/database/database_helper.dart';
 import 'package:language_center/features/student/data/student_repository.dart';
-import 'package:language_center/features/student/models/student.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
