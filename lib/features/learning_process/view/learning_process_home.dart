@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../auth/view/logout_button.dart';
 import '../../auth/view_model/auth_view_model.dart';
+import '../../student/view/students_page.dart';
 import 'classes_page.dart';
 import 'enrollments_page.dart';
-import 'student_lookup_page.dart';
 
 class LearningProcessHome extends StatefulWidget {
   const LearningProcessHome({required this.profile, super.key});
@@ -18,7 +18,7 @@ class LearningProcessHome extends StatefulWidget {
 class _LearningProcessHomeState extends State<LearningProcessHome> {
   int _selectedIndex = 0;
 
-  static const _pages = [EnrollmentsPage(), ClassesPage(), StudentLookupPage()];
+  static const _pages = [EnrollmentsPage(), ClassesPage(), StudentsPage()];
 
   @override
   Widget build(BuildContext context) {
