@@ -6,7 +6,7 @@ import '../../student/view/students_page.dart';
 import '../../teachers/views/teacher_list_view.dart';
 import 'classes_page.dart';
 import 'enrollments_page.dart';
-
+import 'student_lookup_page.dart';
 import '../../course_management/view/course_list_page.dart';
 import '../../course_management/view/classroom_list_page.dart';
 
@@ -21,14 +21,14 @@ class LearningProcessHome extends StatefulWidget {
 
 class _LearningProcessHomeState extends State<LearningProcessHome> {
   int _selectedIndex = 0;
-  static const _pages = [
+    static const _pages = [
     EnrollmentsPage(),
     ClassesPage(),
-    StudentsPage(),
-    StudentLookupPage(),
+    StudentsPage(),                      // Quản lý học viên (CRUD)
+    StudentLookupPage(),                 // Tra cứu tiến trình / lịch sử học
     TeacherListView(showAppBar: false),
-    CourseListPage(), // ← MỚI
-    ClassroomListPage(), // ← MỚI
+    CourseListPage(),
+    ClassroomListPage(),
   ];
 
   @override
@@ -44,38 +44,43 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
         onDestinationSelected: (index) {
           setState(() => _selectedIndex = index);
         },
-        destinations: const [
-  NavigationDestination(
-    icon: Icon(Icons.dashboard_outlined),
-    selectedIcon: Icon(Icons.dashboard),
-    label: 'Tổng quan',
-  ),
-  NavigationDestination(
-    icon: Icon(Icons.class_outlined),
-    selectedIcon: Icon(Icons.class_),
-    label: 'Lớp học',
-  ),
-  NavigationDestination(
-    icon: Icon(Icons.person_search_outlined),
-    selectedIcon: Icon(Icons.person_search),
-    label: 'Học viên',
-  ),
-  NavigationDestination(
-    icon: Icon(Icons.school_outlined),
-    selectedIcon: Icon(Icons.school),
-    label: 'Giáo viên',
-  ),
-  NavigationDestination(
-    icon: Icon(Icons.book_outlined),
-    selectedIcon: Icon(Icons.book),
-    label: 'Khóa học',
-  ),
-  NavigationDestination(
-    icon: Icon(Icons.meeting_room_outlined),
-    selectedIcon: Icon(Icons.meeting_room),
-    label: 'Phòng',
-  ),
-],
+                destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard),
+            label: 'Tổng quan',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.class_outlined),
+            selectedIcon: Icon(Icons.class_),
+            label: 'Lớp học',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: 'Học viên',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_search_outlined),
+            selectedIcon: Icon(Icons.person_search),
+            label: 'Tra cứu',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.school_outlined),
+            selectedIcon: Icon(Icons.school),
+            label: 'Giáo viên',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.book_outlined),
+            selectedIcon: Icon(Icons.book),
+            label: 'Khóa học',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.meeting_room_outlined),
+            selectedIcon: Icon(Icons.meeting_room),
+            label: 'Phòng',
+          ),
+        ],
       ),
     );
   }
