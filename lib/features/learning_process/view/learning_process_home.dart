@@ -6,6 +6,9 @@ import 'classes_page.dart';
 import 'enrollments_page.dart';
 import 'student_lookup_page.dart';
 
+import '../../course_management/view/course_list_page.dart';
+import '../../course_management/view/classroom_list_page.dart';
+
 class LearningProcessHome extends StatefulWidget {
   const LearningProcessHome({required this.profile, super.key});
 
@@ -18,7 +21,13 @@ class LearningProcessHome extends StatefulWidget {
 class _LearningProcessHomeState extends State<LearningProcessHome> {
   int _selectedIndex = 0;
 
-  static const _pages = [EnrollmentsPage(), ClassesPage(), StudentLookupPage()];
+  static const _pages = [
+    EnrollmentsPage(),
+    ClassesPage(),
+    StudentLookupPage(),
+    CourseListPage(), // ← MỚI
+    ClassroomListPage(), // ← MỚI
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +57,17 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
             icon: Icon(Icons.person_search_outlined),
             selectedIcon: Icon(Icons.person_search),
             label: 'Học viên',
+          ),
+          // Thêm destination:
+          NavigationDestination(
+            icon: Icon(Icons.book_outlined),
+            selectedIcon: Icon(Icons.book),
+            label: 'Khóa học',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.meeting_room_outlined),
+            selectedIcon: Icon(Icons.meeting_room),
+            label: 'Phòng',
           ),
         ],
       ),
