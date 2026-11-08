@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../auth/view/logout_button.dart';
 import '../../auth/view_model/auth_view_model.dart';
+import '../../teachers/views/teacher_list_view.dart';
 import 'classes_page.dart';
 import 'enrollments_page.dart';
 import 'student_lookup_page.dart';
@@ -18,7 +19,12 @@ class LearningProcessHome extends StatefulWidget {
 class _LearningProcessHomeState extends State<LearningProcessHome> {
   int _selectedIndex = 0;
 
-  static const _pages = [EnrollmentsPage(), ClassesPage(), StudentLookupPage()];
+  static const _pages = [
+    EnrollmentsPage(),
+    ClassesPage(),
+    StudentLookupPage(),
+    TeacherListView(showAppBar: false),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +54,11 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
             icon: Icon(Icons.person_search_outlined),
             selectedIcon: Icon(Icons.person_search),
             label: 'Học viên',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.school_outlined),
+            selectedIcon: Icon(Icons.school),
+            label: 'Giáo viên',
           ),
         ],
       ),
