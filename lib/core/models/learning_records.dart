@@ -21,8 +21,11 @@ class ClassRecord {
     required this.id,
     required this.code,
     required this.name,
+    required this.courseId,
     required this.courseName,
+    required this.teacherId,
     required this.teacherName,
+    required this.roomId,
     required this.roomName,
     required this.status,
     required this.enrolledCount,
@@ -35,8 +38,11 @@ class ClassRecord {
   final int id;
   final String code;
   final String name;
+  final int courseId;
   final String courseName;
+  final int teacherId;
   final String teacherName;
+  final int roomId;
   final String roomName;
   final String status;
   final int enrolledCount;
@@ -82,6 +88,7 @@ class SessionRecord {
   const SessionRecord({
     required this.id,
     required this.classId,
+    required this.roomId,
     required this.number,
     required this.title,
     required this.startAt,
@@ -91,6 +98,7 @@ class SessionRecord {
 
   final int id;
   final int classId;
+  final int roomId;
   final int number;
   final String title;
   final DateTime startAt;

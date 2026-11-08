@@ -6,7 +6,7 @@ class DatabaseHelper {
     : _factory = factory ?? databaseFactory;
 
   static const databaseName = 'language_center.db';
-  static const databaseVersion = 1;
+  static const databaseVersion = 2;
 
   final DatabaseFactory _factory;
   final String? _databasePath;
@@ -58,8 +58,37 @@ class DatabaseHelper {
         case 1:
           await _createTables(db);
           await _seed(db);
+        case 2:
+          await _upgradeToVersion2(db);
       }
     }
+  }
+
+  Future<void> _upgradeToVersion2(Database db) async {
+    await db.execute(
+      "ALTER TABLE course ADD COLUMN language TEXT NOT NULL DEFAULT ''",
+    );
+    await db.execute(
+      "ALTER TABLE course ADD COLUMN level TEXT NOT NULL DEFAULT ''",
+    );
+    await db.execute(
+      'ALTER TABLE course ADD COLUMN planned_lessons INTEGER NOT NULL DEFAULT 1',
+    );
+    await db.execute(
+      "ALTER TABLE classrooms ADD COLUMN room_code TEXT NOT NULL DEFAULT ''",
+    );
+    await db.execute(
+      "UPDATE classrooms SET room_code = 'R' || id WHERE room_code = ''",
+    );
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_classrooms_code ON classrooms(room_code)',
+    );
+    await db.execute('ALTER TABLE sessions ADD COLUMN cancel_reason TEXT');
+    await db.execute('''
+      UPDATE course
+      SET language = 'Tiếng Anh', level = '5.0', planned_lessons = 24
+      WHERE course_code = 'IELTS_5.0' AND language = ''
+    ''');
   }
 
   Future<void> _createTables(DatabaseExecutor db) async {
@@ -92,6 +121,9 @@ class DatabaseHelper {
         course_code TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
         description TEXT NOT NULL DEFAULT '',
+        language TEXT NOT NULL DEFAULT '',
+        level TEXT NOT NULL DEFAULT '',
+        planned_lessons INTEGER NOT NULL DEFAULT 1,
         duration_weeks INTEGER NOT NULL CHECK(duration_weeks > 0),
         status TEXT NOT NULL CHECK(status IN ('active', 'inactive'))
       )
@@ -99,6 +131,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE IF NOT EXISTS classrooms (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        room_code TEXT NOT NULL UNIQUE,
         room_name TEXT NOT NULL UNIQUE,
         capacity INTEGER NOT NULL CHECK(capacity > 0),
         status TEXT NOT NULL CHECK(status IN ('active', 'inactive'))
@@ -131,6 +164,7 @@ class DatabaseHelper {
         start_at INTEGER NOT NULL,
         end_at INTEGER NOT NULL CHECK(end_at > start_at),
         status TEXT NOT NULL CHECK(status IN ('planned', 'ongoing', 'completed', 'cancelled')),
+        cancel_reason TEXT,
         UNIQUE(class_id, session_number)
       )
     ''');
@@ -229,10 +263,14 @@ class DatabaseHelper {
       'course_code': 'IELTS_5.0',
       'name': 'Luyện thi IELTS mục tiêu 5.0',
       'description': 'Khóa học căn bản đến trung cấp',
+      'language': 'Tiếng Anh',
+      'level': '5.0',
+      'planned_lessons': 24,
       'duration_weeks': 12,
       'status': 'active',
     }, conflictAlgorithm: ConflictAlgorithm.ignore);
     await db.insert('classrooms', {
+      'room_code': 'R302',
       'room_name': 'Room 302',
       'capacity': 25,
       'status': 'active',
