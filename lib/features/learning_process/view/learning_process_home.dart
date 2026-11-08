@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../auth/view/logout_button.dart';
 import '../../auth/view_model/auth_view_model.dart';
+import '../../student/view/students_page.dart';
 import '../../teachers/views/teacher_list_view.dart';
 import 'classes_page.dart';
 import 'enrollments_page.dart';
-import 'student_lookup_page.dart';
 
 import '../../course_management/view/course_list_page.dart';
 import '../../course_management/view/classroom_list_page.dart';
@@ -21,10 +21,10 @@ class LearningProcessHome extends StatefulWidget {
 
 class _LearningProcessHomeState extends State<LearningProcessHome> {
   int _selectedIndex = 0;
-
   static const _pages = [
     EnrollmentsPage(),
     ClassesPage(),
+    StudentsPage(),
     StudentLookupPage(),
     TeacherListView(showAppBar: false),
     CourseListPage(), // ← MỚI
