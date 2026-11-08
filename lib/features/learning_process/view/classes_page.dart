@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../course_management/view/class_form_page.dart';
 import '../view_model/learning_process_view_model.dart';
 import 'class_detail_page.dart';
 
@@ -115,6 +116,12 @@ class _ClassesPageState extends ConsumerState<ClassesPage> {
             ],
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute<void>(builder: (_) => const ClassFormPage())),
+        child: const Icon(Icons.add),
       ),
     );
   }
