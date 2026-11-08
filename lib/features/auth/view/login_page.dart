@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/preferences_provider.dart';
 import '../view_model/auth_view_model.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -16,6 +17,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _rememberEmail = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedPreferences();
+  }
+
+  Future<void> _loadSavedPreferences() async {
+    final remember = await getRememberEmailPreference(ref);
+    final email = await getLastSignedInEmail(ref);
+    if (!mounted) return;
+    setState(() {
+      _rememberEmail = remember;
+      if (remember && email.isNotEmpty) {
+        _emailController.text = email;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -109,12 +129,27 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             return null;
                           },
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: isLoading ? null : _resetPassword,
-                            child: const Text('Quên mật khẩu?'),
-                          ),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberEmail,
+                              onChanged: isLoading
+                                  ? null
+                                  : (value) => setState(() {
+                                      _rememberEmail = value ?? false;
+                                      if (!_rememberEmail) {
+                                        clearSavedEmail(ref);
+                                      }
+                                    }),
+                            ),
+                            const Expanded(
+                              child: Text('Ghi nhớ email đăng nhập'),
+                            ),
+                            TextButton(
+                              onPressed: isLoading ? null : _resetPassword,
+                              child: const Text('Quên mật khẩu?'),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 8),
                         FilledButton(
@@ -154,6 +189,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             email: _emailController.text,
             password: _passwordController.text,
           );
+      if (_rememberEmail) {
+        await saveLastSignedInEmail(ref, _emailController.text);
+        await setRememberEmailPreference(ref, remember: true);
+      } else {
+        await clearSavedEmail(ref);
+        await setRememberEmailPreference(ref, remember: false);
+      }
     } catch (error) {
       if (mounted) _showMessage(_authErrorMessage(error));
     }

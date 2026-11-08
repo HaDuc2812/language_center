@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../auth/view/logout_button.dart';
+import '../../auth/view/profile_page.dart';
 import '../../auth/view_model/auth_view_model.dart';
 import 'classes_page.dart';
 import 'enrollments_page.dart';
@@ -25,7 +26,16 @@ class _LearningProcessHomeState extends State<LearningProcessHome> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Language Center • ${widget.profile.role}'),
-        actions: const [LogoutButton()],
+        actions: [
+          IconButton(
+            tooltip: 'Tài khoản của tôi',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ProfilePage()),
+            ),
+            icon: const Icon(Icons.account_circle_outlined),
+          ),
+          const LogoutButton(),
+        ],
       ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
