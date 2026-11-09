@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/providers/firebase_providers.dart';
 import '../models/teacher_model.dart';
 import '../repositories/teacher_repository_impl.dart';
+import 'teacher_list_viewmodel.dart';
 
 /// AsyncNotifier quản lý trạng thái thực thi các thao tác CUD (Create, Update, Delete, Status Change)
 class TeacherActionViewModel extends AsyncNotifier<void> {
@@ -19,6 +19,8 @@ class TeacherActionViewModel extends AsyncNotifier<void> {
     try {
       final repository = ref.read(teacherRepositoryProvider);
       await repository.createTeacher(teacher);
+      ref.invalidate(teacherListStreamProvider);
+      ref.invalidate(filteredTeachersProvider);
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
@@ -33,6 +35,9 @@ class TeacherActionViewModel extends AsyncNotifier<void> {
     try {
       final repository = ref.read(teacherRepositoryProvider);
       await repository.updateTeacher(teacher);
+      ref.invalidate(teacherListStreamProvider);
+      ref.invalidate(filteredTeachersProvider);
+      ref.invalidate(teacherDetailStreamProvider(teacher.id));
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
@@ -47,6 +52,8 @@ class TeacherActionViewModel extends AsyncNotifier<void> {
     try {
       final repository = ref.read(teacherRepositoryProvider);
       await repository.deleteTeacher(teacherId);
+      ref.invalidate(teacherListStreamProvider);
+      ref.invalidate(filteredTeachersProvider);
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
@@ -68,6 +75,9 @@ class TeacherActionViewModel extends AsyncNotifier<void> {
     try {
       final repository = ref.read(teacherRepositoryProvider);
       await repository.updateTeacherStatus(teacherId, nextStatus);
+      ref.invalidate(teacherListStreamProvider);
+      ref.invalidate(filteredTeachersProvider);
+      ref.invalidate(teacherDetailStreamProvider(teacherId));
       state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
@@ -83,14 +93,16 @@ final teacherActionViewModelProvider =
   TeacherActionViewModel.new,
 );
 
-/// Provider lắng nghe luồng dữ liệu thời gian thực của một giáo viên cụ thể theo ID
+/// Provider lắng nghe dữ liệu của một giáo viên cụ thể theo ID
 final teacherDetailStreamProvider =
-    StreamProvider.autoDispose.family<Teacher?, String>((ref, teacherId) {
-  final firestore = ref.watch(firestoreProvider);
-  return firestore
-      .collection('teachers')
-      .doc(teacherId)
-      .snapshots()
-      .map((doc) => doc.exists ? Teacher.fromFirestore(doc) : null);
+    StreamProvider.autoDispose.family<Teacher?, String>((ref, teacherId) async* {
+  final repository = ref.watch(teacherRepositoryProvider);
+  yield await repository.getTeacherById(teacherId);
+  yield* repository.getTeachersStream().map((teachers) {
+    try {
+      return teachers.firstWhere((t) => t.id == teacherId || t.code == teacherId);
+    } catch (_) {
+      return null;
+    }
+  });
 });
-
